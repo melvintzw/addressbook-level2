@@ -74,7 +74,7 @@ public class Address {
         for (int i = 0; i < 3; i++) {
             int commaIndex = tempStr.indexOf(',');
             splitAddress[i] = tempStr.substring(0, commaIndex + 1);
-            tempStr = tempStr.substring(commaIndex + 2);
+            tempStr = tempStr.substring(commaIndex + 2); //might be better to use trim()
         }
         splitAddress[3] = tempStr;
 
