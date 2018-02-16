@@ -14,14 +14,7 @@ public class Address {
     public static final String MESSAGE_ADDRESS_CONSTRAINTS = "Person addresses can be in any format";
     public static final String ADDRESS_VALIDATION_REGEX = ".+";
 
-    /*
-    private final String _block;
-    private final String _street;
-    private final String _unit;
-    private final String _postalCode;
-    */
-
-    public final String value; //not a field in the LO-ImplementClass, but without, needs lots of modifications
+    public final String value;
 
     private final Block block = new Block();
     private final Street street = new Street();
@@ -42,22 +35,27 @@ public class Address {
             throw new IllegalValueException(MESSAGE_ADDRESS_CONSTRAINTS);
         }
 
+        //splits address into 4 different components
         String[] splitAddress = splitAddress(trimmedAddress);
-
-        /*
-        _block = splitAddress[0];
-        _street = splitAddress[1];
-        _unit = splitAddress[2];
-        _postalCode = splitAddress[3];
-        value = _block + " " + _street + " " + _unit + " " + _postalCode;
-        */
 
         block.setData(splitAddress[0]);
         street.setData(splitAddress[1]);
         unit.setData(splitAddress[2]);
         postalCode.setData(splitAddress[3]);
 
-        value = block.getData() + " " + street.getData() + " " + unit.getData() + " " + postalCode.getData();
+        String temp = block.getData();
+
+        if (street.getData() != null) {
+            temp = temp.concat(" " + street.getData());
+        }
+        if (unit.getData() != null) {
+            temp = temp.concat(" " + unit.getData());
+        }
+        if (postalCode.getData() != null) {
+            temp = temp.concat(" " + postalCode.getData());
+        }
+
+        value = temp;
     }
 
     /**
@@ -69,18 +67,22 @@ public class Address {
     private String[] splitAddress(String address) {
         String[] splitAddress = new String[4];
 
-        //find indices of the commas e.g. "123, Clementi Avenue 3, #
         String tempStr = address;
-        for (int i = 0; i < 3; i++) {
-            int commaIndex = tempStr.indexOf(',');
+        int i = 0;
+        int commaIndex = tempStr.indexOf(',');
+        while (commaIndex >= 0 && i < 4) {
             splitAddress[i] = tempStr.substring(0, commaIndex + 1);
-            tempStr = tempStr.substring(commaIndex + 2); //might be better to use trim()
+            tempStr = tempStr.substring(commaIndex + 1).trim();
+            i++;
+            commaIndex = tempStr.indexOf(',');
         }
-        splitAddress[3] = tempStr;
+        if (i < 4) {
+            //captures last address component that does not have a ",".
+            splitAddress[i] = tempStr.trim();
+        }
 
         return splitAddress;
     }
-
 
     /**
      * Returns true if a given string is a valid person address.
