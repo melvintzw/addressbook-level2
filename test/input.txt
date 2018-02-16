@@ -54,6 +54,12 @@
   # should not allow adding duplicate persons
   add Esther Potato p/555555 e/esther@not.a.real.potato pa/555, epsilon street t/tubers t/starchy
 
+#########################################################
+# test sort command
+#########################################################
+  # should list current entries in alphabetical order
+  sort
+
 ##########################################################
 # test view/viewall persons command
 ##########################################################
